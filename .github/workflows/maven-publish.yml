@@ -1,6 +1,5 @@
 
-name: Maven Verify on main push
-
+name: Maven Verify
 on:
   push:
     branches:
