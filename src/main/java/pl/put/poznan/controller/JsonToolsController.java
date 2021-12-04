@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 
 @RestController
-@RequestMapping("/{text}")
+@RequestMapping("/api/{text}")
 @RequiredArgsConstructor @Slf4j
 public class JsonToolsController {
 
