@@ -22,17 +22,15 @@ public class JsonToolsController {
         log.debug(text);
         log.debug(Arrays.toString(transforms));
 
-        return jsonService.transform(text);
+        return jsonService.addBracesAndRemoveWhitespace(text);
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public String post(@PathVariable String text,
-                      @RequestBody String[] transforms) {
+                      @RequestBody String transforms) {
 
         log.debug(text);
-        log.debug(Arrays.toString(transforms));
-
-        return jsonService.transform(text);
+        return jsonService.addBracesAndRemoveWhitespace(transforms);
     }
 
 
