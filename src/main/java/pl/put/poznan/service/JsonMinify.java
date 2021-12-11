@@ -10,8 +10,7 @@ public class JsonMinify {
 
     public String minify(String text){
         try {
-            Object json;
-            json = mapper.readValue(text, Object.class);
+            Object json = mapper.readValue(text, Object.class);
             return mapper.writeValueAsString(json);
         } catch (JsonProcessingException e) {
             return "";

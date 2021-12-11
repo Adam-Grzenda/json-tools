@@ -10,8 +10,7 @@ public class JsonDeminify {
 
     public String deminify(String text){
         try {
-            Object json;
-            json = mapper.readValue(text, Object.class);
+            Object json = mapper.readValue(text, Object.class);
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
         } catch (JsonProcessingException e) {
             return "";
