@@ -16,7 +16,7 @@ public class JsonToolsController {
     private final JsonDeminify jsonDeminify;
 
     @RequestMapping(value = "/deminify", method = RequestMethod.POST, produces = "application/json")
-    public String get(@RequestBody String text) {
+    public String deminify(@RequestBody String text) {
         log.debug(text);
 
         return jsonDeminify.deminify(text);

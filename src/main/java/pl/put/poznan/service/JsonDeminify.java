@@ -6,20 +6,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JsonDeminify {
+    ObjectMapper mapper = new ObjectMapper();
+
     public String deminify(String text){
-        ObjectMapper mapper = new ObjectMapper();
-        Object json = null;
-        String deminified = null;
+        Object json;
+        String deminified;
+
         try {
             json = mapper.readValue(text, Object.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        try {
             deminified = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+            return deminified;
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            return "";
         }
-        return deminified;
     }
 }
