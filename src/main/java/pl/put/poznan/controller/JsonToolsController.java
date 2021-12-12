@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.service.JsonDeminify;
 import pl.put.poznan.service.JsonMinify;
+import pl.put.poznan.service.JsonFilter;
 
 import java.util.Arrays;
 
@@ -16,6 +17,7 @@ public class JsonToolsController {
 
     private final JsonMinify jsonMinify;
     private final JsonDeminify jsonDeminify;
+    private final JsonFilter jsonFilter;
 
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String text) {
@@ -29,6 +31,13 @@ public class JsonToolsController {
         log.debug(text);
 
         return jsonDeminify.deminify(text);
+    }
+
+    @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
+    public String filter(@RequestBody String text, @RequestParam String[] fields) {
+        log.debug(text);
+
+        return jsonFilter.filter(text, fields);
     }
 
 }
