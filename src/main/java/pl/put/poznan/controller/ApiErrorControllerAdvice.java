@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.put.poznan.DTO.ApiErrorResponse;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 @ControllerAdvice
 public class ApiErrorControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {JsonProcessingException.class})
     protected ResponseEntity<Object> handleJsonParsingConflict(JsonProcessingException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getOriginalMessage()));
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(new ApiErrorResponse(BAD_REQUEST.value(), e.getOriginalMessage()));
     }
 }
