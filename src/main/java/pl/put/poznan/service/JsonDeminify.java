@@ -8,12 +8,8 @@ import org.springframework.stereotype.Service;
 public class JsonDeminify {
     ObjectMapper mapper = new ObjectMapper();
 
-    public String deminify(String text){
-        try {
-            Object json = mapper.readValue(text, Object.class);
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
+    public String deminify(String text) throws JsonProcessingException {
+        Object json = mapper.readValue(text, Object.class);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
     }
 }
