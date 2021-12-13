@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.put.poznan.service.JsonDeminify;
 import pl.put.poznan.service.JsonMinify;
+import pl.put.poznan.service.JsonFilter;
+import pl.put.poznan.service.JsonDelete;
 
 
 @RestController
@@ -19,6 +21,8 @@ public class JsonToolsController {
 
     private final JsonMinify jsonMinify;
     private final JsonDeminify jsonDeminify;
+    private final JsonFilter jsonFilter;
+    private final JsonDelete jsonDelete;
 
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String text) throws JsonProcessingException {
@@ -30,6 +34,18 @@ public class JsonToolsController {
     public String deminify(@RequestBody String text) throws JsonProcessingException {
         log.debug(text);
         return jsonDeminify.deminify(text);
+    }
+
+    @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
+    public String filter(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
+        log.debug(text);
+        return jsonFilter.filter(text, fields);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "application/json")
+    public String delete(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
+        log.debug(text);
+        return jsonDelete.delete(text, fields);
     }
 
 }
