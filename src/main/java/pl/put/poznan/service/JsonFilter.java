@@ -6,7 +6,7 @@ import com.github.bohnman.squiggly.Squiggly;
 import com.github.bohnman.squiggly.util.SquigglyUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
 
 @Service
 public class JsonFilter {
