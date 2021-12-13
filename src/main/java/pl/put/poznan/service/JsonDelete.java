@@ -6,15 +6,18 @@ import com.github.bohnman.squiggly.Squiggly;
 import com.github.bohnman.squiggly.util.SquigglyUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 public class JsonDelete {
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper inputMapper = new ObjectMapper();
 
     public String delete(String text, String[] fields) throws JsonProcessingException {
-            String filters = fields.length == 0 ? "" : "-" + String.join(",-", fields);
+        fields = Arrays.stream(fields).filter(x -> !x.isEmpty()).toArray(String[]::new); //Remove empty strings
+        String filters = fields.length == 0 ? "" : "-" + String.join(",-", fields);
 
-            Object json = mapper.readValue(text, Object.class);
-            mapper = Squiggly.init(mapper, filters);
-            return SquigglyUtils.stringify(mapper, json);
+        Object json = inputMapper.readValue(text, Object.class);
+        ObjectMapper outputMapper = Squiggly.init(new ObjectMapper(), filters);
+        return SquigglyUtils.stringify(outputMapper, json);
     }
 }
