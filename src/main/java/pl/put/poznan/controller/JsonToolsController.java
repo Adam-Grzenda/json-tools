@@ -13,7 +13,8 @@ import pl.put.poznan.service.JsonMinify;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor @Slf4j
+@RequiredArgsConstructor
+@Slf4j
 public class JsonToolsController {
 
     private final JsonMinify jsonMinify;

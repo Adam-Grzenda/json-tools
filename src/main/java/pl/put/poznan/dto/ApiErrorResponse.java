@@ -1,4 +1,4 @@
-package pl.put.poznan.DTO;
+package pl.put.poznan.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
