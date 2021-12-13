@@ -1,5 +1,6 @@
 package pl.put.poznan.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -34,16 +35,14 @@ public class JsonToolsController {
     }
 
     @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
-    public String filter(@RequestBody String text, @RequestParam String[] fields) {
+    public String filter(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
         log.debug(text);
-
         return jsonFilter.filter(text, fields);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "application/json")
-    public String delete(@RequestBody String text, @RequestParam String[] fields) {
+    public String delete(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
         log.debug(text);
-
         return jsonDelete.delete(text, fields);
     }
 

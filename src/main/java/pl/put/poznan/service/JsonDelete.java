@@ -10,15 +10,11 @@ import org.springframework.stereotype.Service;
 public class JsonDelete {
     ObjectMapper mapper = new ObjectMapper();
 
-    public String delete(String text, String[] fields) {
-        try {
-            String filters = "-" + String.join(",-", fields);
+    public String delete(String text, String[] fields) throws JsonProcessingException {
+            String filters = fields.length == 0 ? "" : "-" + String.join(",-", fields);
 
             Object json = mapper.readValue(text, Object.class);
-            mapper = Squiggly.init(new ObjectMapper(), filters);
+            mapper = Squiggly.init(mapper, filters);
             return SquigglyUtils.stringify(mapper, json);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
     }
 }
