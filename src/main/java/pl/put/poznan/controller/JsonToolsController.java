@@ -14,6 +14,8 @@ import pl.put.poznan.service.JsonFilter;
 import pl.put.poznan.service.JsonDelete;
 import pl.put.poznan.service.JsonCompare;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -51,7 +53,7 @@ public class JsonToolsController {
     }
 
     @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
-    public String compare(@RequestBody String text) throws JsonProcessingException {
+    public String compare(@RequestBody String text) throws IOException {
         log.debug(text);
         return jsonCompare.compare(text);
     }
