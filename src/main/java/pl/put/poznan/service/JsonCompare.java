@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
@@ -15,81 +16,69 @@ import java.util.stream.StreamSupport;
 @Service
 public class JsonCompare {
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper;
 
     JsonNode json;
 
-    List<String> firstTextDifference = new ArrayList<String>();
-    List<String> secondTextDifference = new ArrayList<String>();
+    public List<List<String>> addOutputLines(String firstText, String secondText) {
 
-    public List<Integer> getStartEndIndexes(String text, int i) {
+        String[] firstTextLines = firstText.split("\n");
+        String[] secondTextLines = secondText.split("\n");
 
-        List <Integer> indexes = new ArrayList<Integer>(2);
+        List<List<String>> result = new ArrayList<List<String>>(2);
 
-        for (int j = i; j > 0; j--) {
-            if (text.charAt(j) == '\n') {
-                indexes.add(j + 1);
-                break;
-            }
-        }
+        List<String> firstTextDifference = new ArrayList<String>();
+        List<String> secondTextDifference = new ArrayList<String>();
 
-        for (int j = i; j < text.length(); j++) {
-            if (text.charAt(j) == '\n') {
-                indexes.add(j + 1);
-                break;
-            }
-        }
-
-        return indexes;
-    }
-
-    public void addOutputLines(String firstText, String secondText) {
-
-        int startOfLine = 0, endOfLine = 0;
-        int firstLastDifferenceIndex = 0, secondLastDifferenceIndex = 0;
         boolean isCorrect = true;
 
-        int i = 0, j = 0;
+        int lastModifiedLineFirst = 0, lastModifiedLineSecond = 0, i = 0, j = 0;
 
-        while (i < firstText.length() && j < secondText.length()) {
+        while (i < firstTextLines.length && j < secondTextLines.length) {
 
-            if (firstText.charAt(i) != secondText.charAt(j)) {
+            if (!firstTextLines[i].equals(secondTextLines[j])) {
                 isCorrect = false;
-                startOfLine = getStartEndIndexes(firstText, i).get(0);
-                endOfLine = getStartEndIndexes(firstText, i).get(1);
 
-                i = endOfLine - 1;
-
-                firstTextDifference.add(firstText.substring(firstLastDifferenceIndex, startOfLine));
+                for (int x = lastModifiedLineFirst; x < i;  x++) {
+                    firstTextDifference.add(firstTextLines[x]);
+                }
                 firstTextDifference.add("------------------------------------------------\n");
-                firstTextDifference.add(firstText.substring(startOfLine, endOfLine));
+                firstTextDifference.add(firstTextLines[i]);
                 firstTextDifference.add("------------------------------------------------\n");
 
-                firstLastDifferenceIndex = endOfLine;
+                lastModifiedLineFirst = i + 1;
 
-                startOfLine = getStartEndIndexes(secondText, j).get(0);
-                endOfLine = getStartEndIndexes(secondText, j).get(1);
-
-                secondTextDifference.add(secondText.substring(secondLastDifferenceIndex, startOfLine));
+                for (int x = lastModifiedLineSecond; x < j;  x++) {
+                    secondTextDifference.add(secondTextLines[x]);
+                }
                 secondTextDifference.add("------------------------------------------------\n");
-                secondTextDifference.add(secondText.substring(startOfLine, endOfLine));
+                secondTextDifference.add(secondTextLines[j]);
                 secondTextDifference.add("------------------------------------------------\n");
 
-                secondLastDifferenceIndex = endOfLine;
-
-                j = endOfLine - 1;
+                lastModifiedLineSecond = j + 1;
             }
             i++;
             j++;
         }
 
         if (!isCorrect) {
-            firstTextDifference.add(firstText.substring(firstLastDifferenceIndex));
-            secondTextDifference.add(secondText.substring(secondLastDifferenceIndex));
+
+            for (int x = lastModifiedLineFirst; x < firstTextLines.length;  x++) {
+                firstTextDifference.add(firstTextLines[x]);
+            }
+
+            for (int x = lastModifiedLineSecond; x < secondTextLines.length;  x++) {
+                secondTextDifference.add(secondTextLines[x]);
+            }
         } else {
             firstTextDifference.add("");
             secondTextDifference.add("");
         }
+
+        result.add(firstTextDifference);
+        result.add(secondTextDifference);
+
+        return result;
     }
 
     private List<JsonNode> jsonSplitter() throws IOException {
@@ -97,30 +86,7 @@ public class JsonCompare {
         return StreamSupport.stream(json.spliterator(), false).collect(Collectors.toList());
     }
 
-    private String outputToString() {
-
-        StringBuilder firstSB = new StringBuilder();
-        StringBuilder secondSB = new StringBuilder();
-
-        int i = 0;
-        while (i < firstTextDifference.size()) {
-            firstSB.append(firstTextDifference.get(i));
-            i++;
-        }
-
-        i = 0;
-        while (i < secondTextDifference.size()) {
-            secondSB.append(secondTextDifference.get(i));
-            i++;
-        }
-
-        return firstSB.toString() + "\n" + secondSB.toString();
-    }
-
     public String compare(String text) throws IOException {
-
-        firstTextDifference.clear();
-        secondTextDifference.clear();
 
         mapper = new ObjectMapper();
         json = mapper.readValue(text, JsonNode.class);
@@ -131,14 +97,17 @@ public class JsonCompare {
         String firstText = strJson.substring(1, strJson.indexOf("}") + 1);
         String secondText = strJson.substring(strJson.indexOf("}") + 3);
 
-        addOutputLines(firstText, secondText);
+        List<List<String>> result = addOutputLines(firstText, secondText);
+        List<String> firstTextDifference = result.get(0);
+        List<String> secondTextDifference = result.get(1);
 
         List<JsonNode> jsons = jsonSplitter();
 
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
-        String result = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
+        String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
 
-        return result + "\n" + outputToString();
+        return output + "\n" + String.join("", firstTextDifference)
+                + "\n" + String.join("", secondTextDifference);
     }
 }
