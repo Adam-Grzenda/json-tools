@@ -46,8 +46,8 @@ public class JsonToolsController {
         return jsonDelete.delete(text, fields);
     }
 
-    @PostMapping
-    public String transform(@RequestBody String json, TransformRequest request) {
+    @PostMapping(value = "/transform")
+    public String transform(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         request.setJson(json);
         return transformerService.transform(request);
     }

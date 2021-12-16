@@ -3,13 +3,17 @@ package pl.put.poznan.transformer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @NoArgsConstructor
-public class TransformRequest {
-    private boolean minified;
-    private boolean deminified;
+import java.util.List;
 
-    private String[] excludeFields;
-    private String[] includeFields;
+@Data
+@NoArgsConstructor
+public class TransformRequest {
+
+    private boolean minify;
+    private boolean deminify;
+
+    private List<String> excludeFields;
+    private List<String> includeFields;
 
     private String json;
 }

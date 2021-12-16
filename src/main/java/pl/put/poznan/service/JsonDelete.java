@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 @Service
 public class JsonDelete {
+
     ObjectMapper inputMapper = new ObjectMapper();
 
     public String delete(String text, String[] fields) throws JsonProcessingException {

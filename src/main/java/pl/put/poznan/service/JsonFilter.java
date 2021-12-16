@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 @Service
 public class JsonFilter {
+
     ObjectMapper inputMapper = new ObjectMapper();
 
     public String filter(String text, String[] fields) throws JsonProcessingException {

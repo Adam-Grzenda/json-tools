@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JsonMinify {
+
     ObjectMapper mapper = new ObjectMapper();
 
     public String minify(String text) throws JsonProcessingException {
