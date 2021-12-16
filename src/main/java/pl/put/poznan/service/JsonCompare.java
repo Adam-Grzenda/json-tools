@@ -25,10 +25,10 @@ public class JsonCompare {
         String[] firstTextLines = firstText.split("\n");
         String[] secondTextLines = secondText.split("\n");
 
-        List<List<String>> result = new ArrayList<List<String>>(2);
+        List<List<String>> result = new ArrayList<>(2);
 
-        List<String> firstTextDifference = new ArrayList<String>();
-        List<String> secondTextDifference = new ArrayList<String>();
+        List<String> firstTextDifference = new ArrayList<>();
+        List<String> secondTextDifference = new ArrayList<>();
 
         boolean isCorrect = true;
 
@@ -39,18 +39,14 @@ public class JsonCompare {
             if (!firstTextLines[i].equals(secondTextLines[j])) {
                 isCorrect = false;
 
-                for (int x = lastModifiedLineFirst; x < i;  x++) {
-                    firstTextDifference.add(firstTextLines[x]);
-                }
+                firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, i));
                 firstTextDifference.add("------------------------------------------------\n");
                 firstTextDifference.add(firstTextLines[i]);
                 firstTextDifference.add("------------------------------------------------\n");
 
                 lastModifiedLineFirst = i + 1;
 
-                for (int x = lastModifiedLineSecond; x < j;  x++) {
-                    secondTextDifference.add(secondTextLines[x]);
-                }
+                secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, j));
                 secondTextDifference.add("------------------------------------------------\n");
                 secondTextDifference.add(secondTextLines[j]);
                 secondTextDifference.add("------------------------------------------------\n");
@@ -62,17 +58,8 @@ public class JsonCompare {
         }
 
         if (!isCorrect) {
-
-            for (int x = lastModifiedLineFirst; x < firstTextLines.length;  x++) {
-                firstTextDifference.add(firstTextLines[x]);
-            }
-
-            for (int x = lastModifiedLineSecond; x < secondTextLines.length;  x++) {
-                secondTextDifference.add(secondTextLines[x]);
-            }
-        } else {
-            firstTextDifference.add("");
-            secondTextDifference.add("");
+            firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
+            secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
         }
 
         result.add(firstTextDifference);
