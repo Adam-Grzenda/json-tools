@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
+import pl.put.poznan.service.JsonCompare;
 
 import java.util.List;
 
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -17,6 +19,7 @@ import java.util.List;
 public class JsonToolsController {
 
     private final TransformerService transformerService;
+    private final JsonCompare jsonCompare;
 
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String json,  @RequestParam(required = false) List<String> excludeFields,
@@ -42,6 +45,11 @@ public class JsonToolsController {
         return transformerService.transform(request);
     }
 
+    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
+    public String compare(@RequestBody String text) throws IOException {
+        log.debug(text);
+        return jsonCompare.compare(text);
+    }
 }
 
 
