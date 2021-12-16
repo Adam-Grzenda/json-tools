@@ -3,15 +3,9 @@ package pl.put.poznan.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import pl.put.poznan.service.JsonDeminify;
-import pl.put.poznan.service.JsonMinify;
-import pl.put.poznan.service.JsonFilter;
-import pl.put.poznan.service.JsonDelete;
+import org.springframework.web.bind.annotation.*;
+import pl.put.poznan.service.*;
+import pl.put.poznan.transformer.TransformRequest;
 
 
 @RestController
@@ -24,6 +18,9 @@ public class JsonToolsController {
     private final JsonDeminify jsonDeminify;
     private final JsonFilter jsonFilter;
     private final JsonDelete jsonDelete;
+
+    private final TransformerService transformerService;
+
 
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String text) throws JsonProcessingException {
@@ -48,6 +45,13 @@ public class JsonToolsController {
         log.debug(text);
         return jsonDelete.delete(text, fields);
     }
+
+    @PostMapping
+    public String transform(@RequestBody String json, TransformRequest request) {
+        request.setJson(json);
+        return transformerService.transform(request);
+    }
+
 
 }
 
