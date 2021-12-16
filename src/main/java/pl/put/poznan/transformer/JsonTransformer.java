@@ -1,7 +1,7 @@
 package pl.put.poznan.transformer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import pl.put.poznan.service.JsonMapper;
+import pl.put.poznan.transformer.mapper.JsonMapper;
 
 public interface JsonTransformer {
 

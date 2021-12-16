@@ -1,10 +1,8 @@
-package pl.put.poznan.service;
+package pl.put.poznan.transformer.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
 
-@Service
 public class JsonMapper {
 
     private final ObjectMapper mapper = new ObjectMapper();
