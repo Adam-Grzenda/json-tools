@@ -12,7 +12,9 @@ import pl.put.poznan.service.JsonDeminify;
 import pl.put.poznan.service.JsonMinify;
 import pl.put.poznan.service.JsonFilter;
 import pl.put.poznan.service.JsonDelete;
+import pl.put.poznan.service.JsonCompare;
 
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -24,6 +26,7 @@ public class JsonToolsController {
     private final JsonDeminify jsonDeminify;
     private final JsonFilter jsonFilter;
     private final JsonDelete jsonDelete;
+    private final JsonCompare jsonCompare;
 
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String text) throws JsonProcessingException {
@@ -49,6 +52,11 @@ public class JsonToolsController {
         return jsonDelete.delete(text, fields);
     }
 
+    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
+    public String compare(@RequestBody String text) throws IOException {
+        log.debug(text);
+        return jsonCompare.compare(text);
+    }
 }
 
 
