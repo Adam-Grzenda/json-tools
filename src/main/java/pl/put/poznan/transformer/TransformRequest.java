@@ -16,4 +16,12 @@ public class TransformRequest {
     private List<String> includeFields;
 
     private String json;
+
+    public static TransformRequest of(String json, List<String> excludeFields, List<String> includeFields) {
+        TransformRequest transformRequest = new TransformRequest();
+        transformRequest.setJson(json);
+        transformRequest.setExcludeFields(excludeFields);
+        transformRequest.setIncludeFields(includeFields);
+        return transformRequest;
+    }
 }

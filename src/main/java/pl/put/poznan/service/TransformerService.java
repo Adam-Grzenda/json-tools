@@ -13,12 +13,14 @@ import pl.put.poznan.transformer.actions.MinifyTransformer;
 @Slf4j
 public class TransformerService {
 
+    private final FilterTransformer filterTransformer = new FilterTransformer();
+
     public String transform(TransformRequest data) throws JsonProcessingException {
         if (data.isDeminify() && data.isMinify()) {
             throw new IllegalArgumentException("Requesting both minify and deminify is contradictory");
         }
 
-        JsonTransformer transformer = new DeminifyTransformer(new FilterTransformer());
+        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
 
         if (data.isMinify()) {
             transformer = new MinifyTransformer(transformer);
@@ -27,4 +29,20 @@ public class TransformerService {
         log.debug("Transformer service output: " + data);
         return transformer.transform(data).getJson();
     }
+
+    public String minify(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new MinifyTransformer(filterTransformer);
+        return transformer.transform(request).getJson();
+    }
+
+    public String deminify(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
+        return transformer.transform(request).getJson();
+    }
+
+    public String filter(TransformRequest request) throws JsonProcessingException {
+        return filterTransformer.transform(request).getJson();
+    }
+
+
 }

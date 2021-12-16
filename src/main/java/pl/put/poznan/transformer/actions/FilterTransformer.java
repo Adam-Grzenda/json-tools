@@ -22,6 +22,11 @@ public class FilterTransformer implements JsonTransformer {
     }
 
     private TransformRequest filter(TransformRequest request) throws JsonProcessingException {
+
+        if (request.getExcludeFields() == null && request.getIncludeFields() == null) {
+            return request;
+        }
+
         String[] includeFields = Optional.ofNullable(request.getIncludeFields())
                 .orElseGet(Collections::emptyList)
                 .stream()
@@ -32,6 +37,7 @@ public class FilterTransformer implements JsonTransformer {
                 .orElseGet(Collections::emptyList)
                 .stream()
                 .filter(x -> !x.isEmpty())
+                .map(a -> "-" + a)
                 .toArray(String[]::new);
 
         String filters = Stream.of(includeFields, excludeFields).flatMap(Stream::of).collect(Collectors.joining(","));
@@ -48,6 +54,8 @@ public class FilterTransformer implements JsonTransformer {
         Object json = jsonMapper.readJson(inputJson);
         // It's rather interesting that squiggly only pretty prints the object if it is literally Object,
         // whereas for JsonNode it doesn't even filter it - investigate?
+
+        // Given field "friends" and Applied filters: friends,-friends the field is in the response
         log.debug("Applied filters: " + filters);
         ObjectMapper outputMapper = Squiggly.init(new ObjectMapper(), filters);
         return SquigglyUtils.stringify(outputMapper, json);
