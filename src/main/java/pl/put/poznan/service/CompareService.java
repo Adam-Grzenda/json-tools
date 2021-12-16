@@ -2,23 +2,22 @@ package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class JsonCompare {
+public class CompareService {
 
-    ObjectMapper mapper;
-
-    JsonNode json;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public List<List<String>> addOutputLines(String firstText, String secondText) {
 
@@ -58,8 +57,10 @@ public class JsonCompare {
         }
 
         if (!isCorrect) {
-            firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
-            secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
+            firstTextDifference.addAll(
+                    Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
+            secondTextDifference.addAll(
+                    Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
         }
 
         result.add(firstTextDifference);
@@ -68,15 +69,13 @@ public class JsonCompare {
         return result;
     }
 
-    private List<JsonNode> jsonSplitter() throws IOException {
-
+    private List<JsonNode> jsonSplitter(JsonNode json) {
         return StreamSupport.stream(json.spliterator(), false).collect(Collectors.toList());
     }
 
     public String compare(String text) throws IOException {
 
-        mapper = new ObjectMapper();
-        json = mapper.readValue(text, JsonNode.class);
+        JsonNode json = mapper.readValue(text, JsonNode.class);
         String strJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
 
         strJson = strJson.substring(1, strJson.length() - 2);
@@ -88,13 +87,12 @@ public class JsonCompare {
         List<String> firstTextDifference = result.get(0);
         List<String> secondTextDifference = result.get(1);
 
-        List<JsonNode> jsons = jsonSplitter();
+        List<JsonNode> jsons = jsonSplitter(json);
 
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
         String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
 
-        return output + "\n" + String.join("", firstTextDifference)
-                + "\n" + String.join("", secondTextDifference);
+        return output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference);
     }
 }

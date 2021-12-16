@@ -20,9 +20,7 @@ public class ApiErrorControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     protected ResponseEntity<Object> handleBadMethodRequest(IllegalArgumentException e) {
-        return ResponseEntity.status(BAD_REQUEST)
-                .body(new ApiErrorResponse(BAD_REQUEST.value(), e.getMessage()));
+        return ResponseEntity.status(BAD_REQUEST).body(new ApiErrorResponse(BAD_REQUEST.value(), e.getMessage()));
     }
-
 
 }
