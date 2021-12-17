@@ -18,10 +18,10 @@ public class FilterTransformer implements JsonTransformer {
 
     @Override
     public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return filter(request);
+        return applyFilters(request);
     }
 
-    private TransformRequest filter(TransformRequest request) throws JsonProcessingException {
+    private TransformRequest applyFilters(TransformRequest request) throws JsonProcessingException {
 
         if (request.getExcludeFields() == null && request.getIncludeFields() == null) {
             return request;
@@ -43,14 +43,14 @@ public class FilterTransformer implements JsonTransformer {
         String filters = Stream.of(includeFields, excludeFields).flatMap(Stream::of).collect(Collectors.joining(","));
 
         if (!filters.isEmpty()) {
-            request.setJson(filter(request.getJson(), filters));
+            request.setJson(applyFilters(request.getJson(), filters));
             log.debug("Filtered output: " + request);
         }
 
         return request;
     }
 
-    private String filter(String inputJson, String filters) throws JsonProcessingException {
+    private String applyFilters(String inputJson, String filters) throws JsonProcessingException {
         Object json = jsonMapper.readJson(inputJson);
         // It's rather interesting that squiggly only pretty prints the object if it is literally Object,
         // whereas for JsonNode it doesn't even filter it - investigate?
