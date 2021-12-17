@@ -2,24 +2,30 @@ package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class JsonCompare {
+public class CompareService {
 
-    ObjectMapper mapper;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    JsonNode json;
-
+    /**
+     * Algorithm comparing individual lines and inserting markings
+     *
+     * @param firstText is a string containing the user's first json
+     * @param secondText is a string containing the user's second json
+     * @return result of an algorithm for marking lines with differences
+     */
     public List<List<String>> addOutputLines(String firstText, String secondText) {
 
         String[] firstTextLines = firstText.split("\n");
@@ -58,8 +64,10 @@ public class JsonCompare {
         }
 
         if (!isCorrect) {
-            firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
-            secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
+            firstTextDifference.addAll(
+                    Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
+            secondTextDifference.addAll(
+                    Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
         }
 
         result.add(firstTextDifference);
@@ -68,15 +76,26 @@ public class JsonCompare {
         return result;
     }
 
-    private List<JsonNode> jsonSplitter() throws IOException {
-
+    /**
+     * Splits json into two separate documents
+     *
+     * @param json contains two json documents
+     * @return split jsons
+     */
+    private List<JsonNode> jsonSplitter(JsonNode json) {
         return StreamSupport.stream(json.spliterator(), false).collect(Collectors.toList());
     }
 
+    /**
+     * The main method for preparing the input data and joining the final output
+     *
+     * @param text is a string containing the user's jsons
+     * @throws IOException is thrown if the operation on the mapper object fails
+     * @return result of indicating the differences by the zjsonpatch library and the algorithm
+     */
     public String compare(String text) throws IOException {
 
-        mapper = new ObjectMapper();
-        json = mapper.readValue(text, JsonNode.class);
+        JsonNode json = mapper.readValue(text, JsonNode.class);
         String strJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
 
         strJson = strJson.substring(1, strJson.length() - 2);
@@ -88,13 +107,12 @@ public class JsonCompare {
         List<String> firstTextDifference = result.get(0);
         List<String> secondTextDifference = result.get(1);
 
-        List<JsonNode> jsons = jsonSplitter();
+        List<JsonNode> jsons = jsonSplitter(json);
 
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
         String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
 
-        return output + "\n" + String.join("", firstTextDifference)
-                + "\n" + String.join("", secondTextDifference);
+        return output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference);
     }
 }

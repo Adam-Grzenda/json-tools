@@ -3,55 +3,85 @@ package pl.put.poznan.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import pl.put.poznan.service.JsonDeminify;
-import pl.put.poznan.service.JsonMinify;
-import pl.put.poznan.service.JsonFilter;
-import pl.put.poznan.service.JsonDelete;
-import pl.put.poznan.service.JsonCompare;
+import org.springframework.web.bind.annotation.*;
+import pl.put.poznan.service.CompareService;
+import pl.put.poznan.service.TransformerService;
+import pl.put.poznan.transformer.TransformRequest;
 
 import java.io.IOException;
+import java.util.List;
 
+/**
+ * Contains the associations of requests with their respective methods
+ */
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 public class JsonToolsController {
 
-    private final JsonMinify jsonMinify;
-    private final JsonDeminify jsonDeminify;
-    private final JsonFilter jsonFilter;
-    private final JsonDelete jsonDelete;
-    private final JsonCompare jsonCompare;
+    private final TransformerService transformerService;
+    private final CompareService jsonCompare;
 
+    /**
+     * Minifies the json object
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a minified version of json
+     */
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
-    public String minify(@RequestBody String text) throws JsonProcessingException {
-        log.debug(text);
-        return jsonMinify.minify(text);
+    public String minify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
+                         @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
+        return transformerService.minify(TransformRequest.of(json, includeFields, excludeFields));
     }
 
+    /**
+     * Deminifies the json object
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a deminified version of json
+     */
     @RequestMapping(value = "/deminify", method = RequestMethod.POST, produces = "application/json")
-    public String deminify(@RequestBody String text) throws JsonProcessingException {
-        log.debug(text);
-        return jsonDeminify.deminify(text);
+    public String deminify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
+                           @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
+        return transformerService.deminify(TransformRequest.of(json, excludeFields, includeFields));
     }
 
+    /**
+     * Simplifies the structure, leaving only the properties that the user wanted
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a simplified version of json
+     */
     @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
-    public String filter(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
-        log.debug(text);
-        return jsonFilter.filter(text, fields);
+    public String filter(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
+        request.setJson(json);
+        return transformerService.filter(request);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "application/json")
-    public String delete(@RequestBody String text, @RequestParam String[] fields) throws JsonProcessingException {
-        log.debug(text);
-        return jsonDelete.delete(text, fields);
+    /**
+     * Simplifies the structure by removing only the properties that the user wanted
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a simplified version of json
+     */
+    @PostMapping(value = "/transform", produces = "application/json")
+    public String transform(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
+        request.setJson(json);
+        return transformerService.transform(request);
     }
 
+    /**
+     * Comparison of two texts with an indication of the differences
+     *
+     * @param text is a string containing the user's json
+     * @throws IOException is thrown if the operation on the mapper object fails
+     * @return string with the line markings for the errors
+     */
     @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
     public String compare(@RequestBody String text) throws IOException {
         log.debug(text);
