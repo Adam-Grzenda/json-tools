@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.put.poznan.transformer.JsonTransformer;
 import pl.put.poznan.transformer.TransformRequest;
-import pl.put.poznan.transformer.actions.DeminifyTransformer;
+import pl.put.poznan.transformer.actions.FormatTransformer;
 import pl.put.poznan.transformer.actions.FilterTransformer;
-import pl.put.poznan.transformer.actions.MinifyTransformer;
 
 @Service
 @Slf4j
@@ -20,23 +19,14 @@ public class TransformerService {
             throw new IllegalArgumentException("Requesting both minify and deminify is contradictory");
         }
 
-        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
-
-        if (data.isMinify()) {
-            transformer = new MinifyTransformer(transformer);
-        }
+        JsonTransformer transformer = new FormatTransformer(filterTransformer);
 
         log.debug("Transformer service output: " + data);
         return transformer.transform(data).getJson();
     }
 
-    public String minify(TransformRequest request) throws JsonProcessingException {
-        JsonTransformer transformer = new MinifyTransformer(filterTransformer);
-        return transformer.transform(request).getJson();
-    }
-
-    public String deminify(TransformRequest request) throws JsonProcessingException {
-        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
+    public String format(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new FormatTransformer(filterTransformer);
         return transformer.transform(request).getJson();
     }
 
