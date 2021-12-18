@@ -1,10 +1,10 @@
 package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import org.springframework.stereotype.Service;
+import pl.put.poznan.transformer.mapper.JsonMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class CompareService {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.getInstance();
 
     public List<List<String>> addOutputLines(String firstText, String secondText) {
 
@@ -75,8 +75,8 @@ public class CompareService {
 
     public String compare(String text) throws IOException {
 
-        JsonNode json = mapper.readValue(text, JsonNode.class);
-        String strJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        JsonNode json = mapper.readJson(text, JsonNode.class);
+        String strJson = mapper.writeJsonAsString(json, true);
 
         strJson = strJson.substring(1, strJson.length() - 2);
 

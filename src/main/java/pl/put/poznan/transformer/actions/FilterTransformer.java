@@ -51,7 +51,7 @@ public class FilterTransformer implements JsonTransformer {
     }
 
     private String applyFilters(String inputJson, String filters) throws JsonProcessingException {
-        Object json = jsonMapper.readJson(inputJson);
+        Object json = jsonMapper.readJson(inputJson, Object.class);
         // It's rather interesting that squiggly only pretty prints the object if it is literally Object,
         // whereas for JsonNode it doesn't even filter it - investigate?
 

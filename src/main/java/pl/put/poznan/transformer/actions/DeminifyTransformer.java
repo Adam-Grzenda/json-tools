@@ -19,7 +19,7 @@ public class DeminifyTransformer extends JsonTransformerDecorator {
     }
 
     private TransformRequest deminify(TransformRequest request) throws JsonProcessingException {
-        Object json = jsonMapper.readJson(request.getJson());
+        Object json = jsonMapper.readJson(request.getJson(), Object.class);
         String transformed = jsonMapper.writeJsonAsString(json, true);
         request.setJson(transformed);
         log.debug("Deminified output: " + request);

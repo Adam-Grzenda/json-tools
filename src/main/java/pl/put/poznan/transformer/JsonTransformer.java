@@ -5,7 +5,7 @@ import pl.put.poznan.transformer.mapper.JsonMapper;
 
 public interface JsonTransformer {
 
-    JsonMapper jsonMapper = new JsonMapper();
+    JsonMapper jsonMapper = JsonMapper.getInstance();
 
     TransformRequest transform(TransformRequest request) throws JsonProcessingException;
 }
