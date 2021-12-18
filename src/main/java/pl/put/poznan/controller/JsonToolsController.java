@@ -9,7 +9,6 @@ import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -20,19 +19,16 @@ public class JsonToolsController {
     private final TransformerService transformerService;
     private final CompareService jsonCompare;
 
-    @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
-    public String minify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
-                         @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
-        return transformerService.minify(TransformRequest.of(json, includeFields, excludeFields));
+    @PostMapping(value = "/format", produces = "application/json")
+    public String format(@RequestBody String json, @RequestParam boolean minify, @RequestParam boolean deminify,
+                         TransformRequest request) throws JsonProcessingException {
+        request.setJson(json);
+        request.setMinify(minify);
+        request.setDeminify(deminify);
+        return transformerService.format(request);
     }
 
-    @RequestMapping(value = "/deminify", method = RequestMethod.POST, produces = "application/json")
-    public String deminify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
-                           @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
-        return transformerService.deminify(TransformRequest.of(json, excludeFields, includeFields));
-    }
-
-    @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
+    @PostMapping(value = "/filter", produces = "application/json")
     public String filter(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         request.setJson(json);
         return transformerService.filter(request);
@@ -44,7 +40,7 @@ public class JsonToolsController {
         return transformerService.transform(request);
     }
 
-    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
+    @PostMapping(value = "/compare", produces = "application/json")
     public String compare(@RequestBody String text) throws IOException {
         log.debug(text);
         return jsonCompare.compare(text);
