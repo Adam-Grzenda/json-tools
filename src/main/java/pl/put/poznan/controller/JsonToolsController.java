@@ -20,11 +20,8 @@ public class JsonToolsController {
     private final CompareService jsonCompare;
 
     @PostMapping(value = "/format", produces = "application/json")
-    public String format(@RequestBody String json, @RequestParam boolean minify, @RequestParam boolean deminify,
-                         TransformRequest request) throws JsonProcessingException {
+    public String format(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         request.setJson(json);
-        request.setMinify(minify);
-        request.setDeminify(deminify);
         return transformerService.format(request);
     }
 
