@@ -62,13 +62,7 @@ public class JsonToolsController {
         return transformerService.filter(request);
     }
 
-    /**
-     * Simplifies the structure by removing only the properties that the user wanted
-     *
-     * @param json is a string containing the user's json
-     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
-     * @return string containing a simplified version of json
-     */
+
     @PostMapping(value = "/transform", produces = "application/json")
     public String transform(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         request.setJson(json);

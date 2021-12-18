@@ -7,9 +7,17 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+/**
+ * The class responsible for selecting settings and managing the swagger
+ */
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * A method that gives easy access to configuration changes
+     *
+     * @return a built object of class docket, which is a configuration interface
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()

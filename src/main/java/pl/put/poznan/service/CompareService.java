@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * The class in which the methods needed to compare json and search for difference are stored
+ */
 @Service
 public class CompareService {
 
