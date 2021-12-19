@@ -16,6 +16,10 @@ import java.util.stream.Stream;
 @Slf4j
 public class FilterTransformer implements JsonTransformer {
 
+    public FilterTransformer() {
+        log.info("Initialized FilterTransformer");
+    }
+
     @Override
     public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
         return applyFilters(request);

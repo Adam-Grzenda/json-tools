@@ -11,6 +11,7 @@ public class MinifyTransformer extends JsonTransformerDecorator {
 
     public MinifyTransformer(JsonTransformer jsonTransformer) {
         super(jsonTransformer);
+        log.info("Initialized MinifyTransformer");
     }
 
     @Override

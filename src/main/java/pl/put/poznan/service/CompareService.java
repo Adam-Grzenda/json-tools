@@ -1,6 +1,7 @@
 package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Slf4j
 public class CompareService {
 
     private final JsonMapper mapper = JsonMapper.getInstance();
+
+    public CompareService() {
+        log.info("Initialized CompareService");
+    }
 
     public List<List<String>> addOutputLines(String firstText, String secondText) {
 
@@ -83,6 +89,9 @@ public class CompareService {
         String firstText = strJson.substring(1, strJson.indexOf("}") + 1);
         String secondText = strJson.substring(strJson.indexOf("}") + 3);
 
+        log.debug("First compared text: " + firstText);
+        log.debug("Second compared text: " + secondText);
+
         List<List<String>> result = addOutputLines(firstText, secondText);
         List<String> firstTextDifference = result.get(0);
         List<String> secondTextDifference = result.get(1);
@@ -92,6 +101,8 @@ public class CompareService {
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
         String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
+
+        log.debug("Compare service output: " + output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference));
 
         return output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference);
     }
