@@ -23,7 +23,7 @@ public class JsonToolsController {
     @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
     public String minify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
                          @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
-        return transformerService.minify(TransformRequest.of(json, includeFields, excludeFields));
+        return transformerService.minify(TransformRequest.of(json, excludeFields, includeFields));
     }
 
     @RequestMapping(value = "/deminify", method = RequestMethod.POST, produces = "application/json")
