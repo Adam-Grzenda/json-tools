@@ -48,11 +48,9 @@ public class JsonToolsController {
         return transformerService.transform(request);
     }
 
-    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "text/plain")
     public String compare(@RequestBody String text) throws IOException {
         log.info("Incoming request at endpoint /compare");
         return jsonCompare.compare(text);
     }
 }
-
-

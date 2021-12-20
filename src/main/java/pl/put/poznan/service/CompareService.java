@@ -44,17 +44,15 @@ public class CompareService {
             if (!firstTextLines[i].equals(secondTextLines[j])) {
                 isCorrect = false;
 
-                firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, i));
-                firstTextDifference.add("------------------------------------------------\n");
-                firstTextDifference.add(firstTextLines[i]);
-                firstTextDifference.add("------------------------------------------------\n");
+                firstTextDifference.addAll(Arrays.asList(firstTextLines)
+                        .subList(lastModifiedLineFirst, i));
+                firstTextDifference.add(firstTextLines[i] + " <--- Mismatch");
 
                 lastModifiedLineFirst = i + 1;
 
-                secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, j));
-                secondTextDifference.add("------------------------------------------------\n");
-                secondTextDifference.add(secondTextLines[j]);
-                secondTextDifference.add("------------------------------------------------\n");
+                secondTextDifference.addAll(Arrays.asList(secondTextLines)
+                        .subList(lastModifiedLineSecond, j));
+                secondTextDifference.add(secondTextLines[j] + " <--- Mismatch");
 
                 lastModifiedLineSecond = j + 1;
             }
@@ -63,10 +61,10 @@ public class CompareService {
         }
 
         if (!isCorrect) {
-            firstTextDifference.addAll(
-                    Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
-            secondTextDifference.addAll(
-                    Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
+            firstTextDifference.addAll(Arrays.asList(firstTextLines)
+                    .subList(lastModifiedLineFirst, firstTextLines.length));
+            secondTextDifference.addAll(Arrays.asList(secondTextLines)
+                    .subList(lastModifiedLineSecond, secondTextLines.length));
         }
 
         result.add(firstTextDifference);
@@ -100,10 +98,9 @@ public class CompareService {
 
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
-        String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
+        String output = patch.toString() + "\n" + String.join("\n", firstTextDifference) + "\n" + String.join("\n", secondTextDifference);
 
-        log.debug("Compare service output: " + output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference));
-
-        return output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference);
+        log.debug("Compare service output: " + output);
+        return output;
     }
 }
