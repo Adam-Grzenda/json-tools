@@ -9,6 +9,11 @@ import pl.put.poznan.transformer.actions.DeminifyTransformer;
 import pl.put.poznan.transformer.actions.FilterTransformer;
 import pl.put.poznan.transformer.actions.MinifyTransformer;
 
+import java.io.IOException;
+
+/**
+ * A class that implements operations performed on json documents
+ */
 @Service
 @Slf4j
 public class TransformerService {
