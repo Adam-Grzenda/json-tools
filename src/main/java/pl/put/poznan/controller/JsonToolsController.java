@@ -35,7 +35,7 @@ public class JsonToolsController {
                          @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
         log.info("Incoming request at endpoint /minify");
         return transformerService.minify(TransformRequest.of(json, excludeFields, includeFields));
-
+    }
     /**
      * Deminifies the json object
      *

@@ -2,12 +2,15 @@ package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
+import pl.put.poznan.transformer.mapper.JsonMapper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
