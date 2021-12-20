@@ -25,10 +25,13 @@ public class TransformerService {
             throw new IllegalArgumentException("Requesting both minify and deminify is contradictory");
         }
 
-        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
+        JsonTransformer transformer;
 
         if (data.isMinify()) {
-            transformer = new MinifyTransformer(transformer);
+            transformer = new MinifyTransformer(filterTransformer);
+        }
+        else {
+            transformer = new DeminifyTransformer(filterTransformer);
         }
 
         log.debug("Transformer service output: " + data);

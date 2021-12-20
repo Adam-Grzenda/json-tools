@@ -2,10 +2,12 @@ package pl.put.poznan.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,10 +20,14 @@ import java.util.stream.StreamSupport;
  * The class in which the methods needed to compare json and search for difference are stored
  */
 @Service
+@Slf4j
 public class CompareService {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.getInstance();
 
+    public CompareService() {
+        log.info("Initialized CompareService");
+    }
     /**
      * Algorithm comparing individual lines and inserting markings
      *
@@ -48,17 +54,15 @@ public class CompareService {
             if (!firstTextLines[i].equals(secondTextLines[j])) {
                 isCorrect = false;
 
-                firstTextDifference.addAll(Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, i));
-                firstTextDifference.add("------------------------------------------------\n");
-                firstTextDifference.add(firstTextLines[i]);
-                firstTextDifference.add("------------------------------------------------\n");
+                firstTextDifference.addAll(Arrays.asList(firstTextLines)
+                        .subList(lastModifiedLineFirst, i));
+                firstTextDifference.add(firstTextLines[i] + " <--- Mismatch");
 
                 lastModifiedLineFirst = i + 1;
 
-                secondTextDifference.addAll(Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, j));
-                secondTextDifference.add("------------------------------------------------\n");
-                secondTextDifference.add(secondTextLines[j]);
-                secondTextDifference.add("------------------------------------------------\n");
+                secondTextDifference.addAll(Arrays.asList(secondTextLines)
+                        .subList(lastModifiedLineSecond, j));
+                secondTextDifference.add(secondTextLines[j] + " <--- Mismatch");
 
                 lastModifiedLineSecond = j + 1;
             }
@@ -67,10 +71,10 @@ public class CompareService {
         }
 
         if (!isCorrect) {
-            firstTextDifference.addAll(
-                    Arrays.asList(firstTextLines).subList(lastModifiedLineFirst, firstTextLines.length));
-            secondTextDifference.addAll(
-                    Arrays.asList(secondTextLines).subList(lastModifiedLineSecond, secondTextLines.length));
+            firstTextDifference.addAll(Arrays.asList(firstTextLines)
+                    .subList(lastModifiedLineFirst, firstTextLines.length));
+            secondTextDifference.addAll(Arrays.asList(secondTextLines)
+                    .subList(lastModifiedLineSecond, secondTextLines.length));
         }
 
         result.add(firstTextDifference);
@@ -98,13 +102,16 @@ public class CompareService {
      */
     public String compare(String text) throws IOException {
 
-        JsonNode json = mapper.readValue(text, JsonNode.class);
-        String strJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        JsonNode json = mapper.readJson(text, JsonNode.class);
+        String strJson = mapper.writeJsonAsString(json, true);
 
         strJson = strJson.substring(1, strJson.length() - 2);
 
         String firstText = strJson.substring(1, strJson.indexOf("}") + 1);
         String secondText = strJson.substring(strJson.indexOf("}") + 3);
+
+        log.debug("First compared text: " + firstText);
+        log.debug("Second compared text: " + secondText);
 
         List<List<String>> result = addOutputLines(firstText, secondText);
         List<String> firstTextDifference = result.get(0);
@@ -114,8 +121,9 @@ public class CompareService {
 
         EnumSet<DiffFlags> flags = DiffFlags.dontNormalizeOpIntoMoveAndCopy().clone();
         JsonNode patch = JsonDiff.asJson(jsons.get(0), jsons.get(1), flags);
-        String output = "JSONs:\n" + text + "\nDescription of the differences:\n" + patch.toString();
+        String output = patch.toString() + "\n" + String.join("\n", firstTextDifference) + "\n" + String.join("\n", secondTextDifference);
 
-        return output + "\n" + String.join("", firstTextDifference) + "\n" + String.join("", secondTextDifference);
+        log.debug("Compare service output: " + output);
+        return output;
     }
 }

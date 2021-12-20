@@ -16,6 +16,10 @@ import java.util.stream.Stream;
 @Slf4j
 public class FilterTransformer implements JsonTransformer {
 
+    public FilterTransformer() {
+        log.info("Initialized FilterTransformer");
+    }
+
     @Override
     public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
         return applyFilters(request);
@@ -51,7 +55,7 @@ public class FilterTransformer implements JsonTransformer {
     }
 
     private String applyFilters(String inputJson, String filters) throws JsonProcessingException {
-        Object json = jsonMapper.readJson(inputJson);
+        Object json = jsonMapper.readJson(inputJson, Object.class);
         // It's rather interesting that squiggly only pretty prints the object if it is literally Object,
         // whereas for JsonNode it doesn't even filter it - investigate?
 
