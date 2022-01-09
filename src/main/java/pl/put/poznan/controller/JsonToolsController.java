@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.service.CompareService;
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
+import org.json.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +49,20 @@ public class JsonToolsController {
                            @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
         log.info("Incoming request at endpoint /deminify");
         return transformerService.deminify(TransformRequest.of(json, excludeFields, includeFields));
+    }
+
+    /**
+     * Sort the json object
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a sorted version of json
+     */
+    @RequestMapping(value = "/sort", method = RequestMethod.POST, produces = "application/json")
+    public String sort(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
+                           @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
+        log.info("Incoming request at endpoint /sort");
+        return transformerService.sort(TransformRequest.of(json, excludeFields, includeFields));
     }
 
     /**

@@ -8,8 +8,7 @@ import pl.put.poznan.transformer.TransformRequest;
 import pl.put.poznan.transformer.actions.DeminifyTransformer;
 import pl.put.poznan.transformer.actions.FilterTransformer;
 import pl.put.poznan.transformer.actions.MinifyTransformer;
-
-import java.io.IOException;
+import pl.put.poznan.transformer.actions.SortTransformer;
 
 /**
  * A class that implements operations performed on json documents
@@ -48,9 +47,12 @@ public class TransformerService {
         return transformer.transform(request).getJson();
     }
 
+    public String sort(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new SortTransformer(filterTransformer);
+        return transformer.transform(request).getJson();
+    }
+
     public String filter(TransformRequest request) throws JsonProcessingException {
         return filterTransformer.transform(request).getJson();
     }
-
-
 }
