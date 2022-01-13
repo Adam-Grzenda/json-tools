@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.service.CompareService;
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
-import org.json.*;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Contains the associations of requests with their respective methods
@@ -25,44 +23,31 @@ public class JsonToolsController {
     private final CompareService jsonCompare;
 
     /**
-     * Minifies the json object
+     * Changes the format of the json object to minified or deminified (pretty printed)
      *
      * @param json is a string containing the user's json
      * @throws JsonProcessingException is thrown if the operation on the mapper object fails
-     * @return string containing a minified version of json
+     * @return string containing a reformatted version of json
      */
-    @RequestMapping(value = "/minify", method = RequestMethod.POST, produces = "application/json")
-    public String minify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
-                         @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
-        log.info("Incoming request at endpoint /minify");
-        return transformerService.minify(TransformRequest.of(json, excludeFields, includeFields));
-    }
-    /**
-     * Deminifies the json object
-     *
-     * @param json is a string containing the user's json
-     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
-     * @return string containing a deminified version of json
-     */
-    @RequestMapping(value = "/deminify", method = RequestMethod.POST, produces = "application/json")
-    public String deminify(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
-                           @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
-        log.info("Incoming request at endpoint /deminify");
-        return transformerService.deminify(TransformRequest.of(json, excludeFields, includeFields));
+    @PostMapping(value = "/format", produces = "application/json")
+    public String format(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
+        log.info("Incoming request at endpoint /format");
+        request.setJson(json);
+        return transformerService.format(request);
     }
 
     /**
-     * Sort the json object
+     * Sorts the json object's fields alphabetically
      *
      * @param json is a string containing the user's json
      * @throws JsonProcessingException is thrown if the operation on the mapper object fails
      * @return string containing a sorted version of json
      */
-    @RequestMapping(value = "/sort", method = RequestMethod.POST, produces = "application/json")
-    public String sort(@RequestBody String json, @RequestParam(required = false) List<String> excludeFields,
-                           @RequestParam(required = false) List<String> includeFields) throws JsonProcessingException {
+    @PostMapping(value = "/sort", produces = "application/json")
+    public String sort(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         log.info("Incoming request at endpoint /sort");
-        return transformerService.sort(TransformRequest.of(json, excludeFields, includeFields));
+        request.setJson(json);
+        return transformerService.sort(request);
     }
 
     /**
@@ -72,13 +57,20 @@ public class JsonToolsController {
      * @throws JsonProcessingException is thrown if the operation on the mapper object fails
      * @return string containing a simplified version of json
      */
-    @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
+    @PostMapping(value = "/filter", produces = "application/json")
     public String filter(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         log.info("Incoming request at endpoint /filter");
         request.setJson(json);
         return transformerService.filter(request);
     }
 
+    /**
+     * Performs any implemented transformations on the json object
+     *
+     * @param json is a string containing the user's json
+     * @throws JsonProcessingException is thrown if the operation on the mapper object fails
+     * @return string containing a transformed version of json
+     */
     @PostMapping(value = "/transform", produces = "application/json")
     public String transform(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
         log.info("Incoming request at endpoint /transform");
@@ -93,7 +85,7 @@ public class JsonToolsController {
      * @throws IOException is thrown if the operation on the mapper object fails
      * @return string with the line markings for the errors
      */
-    @RequestMapping(value = "/compare", method = RequestMethod.POST, produces = "text/plain")
+    @PostMapping(value = "/compare", produces = "text/plain")
     public String compare(@RequestBody String text) throws IOException {
         log.info("Incoming request at endpoint /compare");
         return jsonCompare.compare(text);

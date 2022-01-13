@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.put.poznan.transformer.JsonTransformer;
 import pl.put.poznan.transformer.TransformRequest;
-import pl.put.poznan.transformer.actions.DeminifyTransformer;
+import pl.put.poznan.transformer.actions.FormatTransformer;
 import pl.put.poznan.transformer.actions.FilterTransformer;
-import pl.put.poznan.transformer.actions.MinifyTransformer;
 import pl.put.poznan.transformer.actions.SortTransformer;
 
 /**
- * A class that implements operations performed on json documents
+ * A class that invokes operations performed on json documents
  */
 @Service
 @Slf4j
@@ -24,26 +23,14 @@ public class TransformerService {
             throw new IllegalArgumentException("Requesting both minify and deminify is contradictory");
         }
 
-        JsonTransformer transformer;
-
-        if (data.isMinify()) {
-            transformer = new MinifyTransformer(filterTransformer);
-        }
-        else {
-            transformer = new DeminifyTransformer(filterTransformer);
-        }
+        JsonTransformer transformer = new FormatTransformer(filterTransformer);
 
         log.debug("Transformer service output: " + data);
         return transformer.transform(data).getJson();
     }
 
-    public String minify(TransformRequest request) throws JsonProcessingException {
-        JsonTransformer transformer = new MinifyTransformer(filterTransformer);
-        return transformer.transform(request).getJson();
-    }
-
-    public String deminify(TransformRequest request) throws JsonProcessingException {
-        JsonTransformer transformer = new DeminifyTransformer(filterTransformer);
+    public String format(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new FormatTransformer(filterTransformer);
         return transformer.transform(request).getJson();
     }
 
@@ -55,4 +42,6 @@ public class TransformerService {
     public String filter(TransformRequest request) throws JsonProcessingException {
         return filterTransformer.transform(request).getJson();
     }
+
+
 }
