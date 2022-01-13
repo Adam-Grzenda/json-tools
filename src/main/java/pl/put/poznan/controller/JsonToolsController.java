@@ -73,6 +73,7 @@ public class JsonToolsController {
      */
     @PostMapping(value = "/transform", produces = "application/json")
     public String transform(@RequestBody String json, TransformRequest request) throws JsonProcessingException {
+        log.info("Incoming request at endpoint /transform");
         request.setJson(json);
         return transformerService.transform(request);
     }
@@ -90,5 +91,3 @@ public class JsonToolsController {
         return jsonCompare.compare(text);
     }
 }
-
-
