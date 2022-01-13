@@ -7,7 +7,11 @@ import pl.put.poznan.transformer.JsonTransformer;
 import pl.put.poznan.transformer.TransformRequest;
 import pl.put.poznan.transformer.actions.FormatTransformer;
 import pl.put.poznan.transformer.actions.FilterTransformer;
+import pl.put.poznan.transformer.actions.SortTransformer;
 
+/**
+ * A class that invokes operations performed on json documents
+ */
 @Service
 @Slf4j
 public class TransformerService {
@@ -27,6 +31,11 @@ public class TransformerService {
 
     public String format(TransformRequest request) throws JsonProcessingException {
         JsonTransformer transformer = new FormatTransformer(filterTransformer);
+        return transformer.transform(request).getJson();
+    }
+
+    public String sort(TransformRequest request) throws JsonProcessingException {
+        JsonTransformer transformer = new SortTransformer(filterTransformer);
         return transformer.transform(request).getJson();
     }
 
