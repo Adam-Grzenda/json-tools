@@ -2,10 +2,13 @@ package pl.put.poznan.transformer.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JsonMapper {
 
     private JsonMapper() {
+        log.info("Initialized JsonMapper");
     }
 
     private static JsonMapper jsonMapper = null;
