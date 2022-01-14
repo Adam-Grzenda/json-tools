@@ -19,11 +19,7 @@ public class TransformerService {
     private final FilterTransformer filterTransformer = new FilterTransformer();
 
     public String transform(TransformRequest data) throws JsonProcessingException {
-        if (data.isDeminify() && data.isMinify()) {
-            throw new IllegalArgumentException("Requesting both minify and deminify is contradictory");
-        }
-
-        JsonTransformer transformer = new FormatTransformer(filterTransformer);
+        JsonTransformer transformer = new FormatTransformer(new SortTransformer(filterTransformer));
 
         log.debug("Transformer service output: " + data);
         return transformer.transform(data).getJson();
