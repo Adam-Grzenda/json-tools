@@ -22,21 +22,25 @@ public class TransformerService {
         JsonTransformer transformer = new FormatTransformer(new SortTransformer(filterTransformer));
 
         log.debug("Transformer service output: " + data);
-        return transformer.transform(data).getJson();
+        return transformer.transform(data, null).getJson();
     }
 
     public String format(TransformRequest request) throws JsonProcessingException {
         JsonTransformer transformer = new FormatTransformer(filterTransformer);
-        return transformer.transform(request).getJson();
+        return transformer.transform(request, null).getJson();
     }
 
     public String sort(TransformRequest request) throws JsonProcessingException {
         JsonTransformer transformer = new SortTransformer(filterTransformer);
-        return transformer.transform(request).getJson();
+        return transformer.transform(request, null).getJson();
     }
 
     public String filter(TransformRequest request) throws JsonProcessingException {
-        return filterTransformer.transform(request).getJson();
+        return filter(request, null);
+    }
+
+    public String filter(TransformRequest request, FormatTransformer formatChecker) throws JsonProcessingException {
+        return filterTransformer.transform(request, formatChecker).getJson();
     }
 
 

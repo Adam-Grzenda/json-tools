@@ -30,8 +30,8 @@ public class FormatTransformer extends JsonTransformerDecorator {
      * @throws JsonProcessingException if JSON object cannot be reformatted
      */
     @Override
-    public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return format(super.transform(request));
+    public TransformRequest transform(TransformRequest request, JsonTransformer helper) throws JsonProcessingException {
+        return format(super.transform(request, helper));
     }
 
     /**

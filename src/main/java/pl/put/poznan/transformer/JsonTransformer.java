@@ -7,5 +7,5 @@ public interface JsonTransformer {
 
     JsonMapper jsonMapper = JsonMapper.getInstance();
 
-    TransformRequest transform(TransformRequest request) throws JsonProcessingException;
+    TransformRequest transform(TransformRequest request, JsonTransformer helper) throws JsonProcessingException;
 }

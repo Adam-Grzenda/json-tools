@@ -33,8 +33,8 @@ public class SortTransformer extends JsonTransformerDecorator {
      * @throws JsonProcessingException if JSON object cannot be sorted
      */
     @Override
-    public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return sort(super.transform(request));
+    public TransformRequest transform(TransformRequest request, JsonTransformer helper) throws JsonProcessingException {
+        return sort(super.transform(request, helper));
     }
 
     /**
@@ -45,7 +45,7 @@ public class SortTransformer extends JsonTransformerDecorator {
      * @throws JsonProcessingException if JSON object cannot be read or transformed
      */
     private TransformRequest sort(TransformRequest request) throws JsonProcessingException {
-        FormatTransformer formatChecker = new FormatTransformer(this);
+        FormatTransformer formatChecker = new FormatTransformer(new FilterTransformer());
         boolean minifiedInput = formatChecker.isMinified(request);
 
         Object json = jsonMapper.readJson(request.getJson(), Object.class);
@@ -58,7 +58,7 @@ public class SortTransformer extends JsonTransformerDecorator {
         if (!minifiedInput) {
             // Unwanted transformation done by the sorting library needs to be reverted
             TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
-            request.setJson(formatChecker.transform(deminifyRequest).getJson());
+            request.setJson(formatChecker.transform(deminifyRequest, null).getJson());
         }
 
         return request;
