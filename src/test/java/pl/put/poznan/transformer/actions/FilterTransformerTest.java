@@ -234,4 +234,36 @@ class FilterTransformerTest {
 
         assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
     }
+
+    @Test
+    void testFilter_EmptyJsonInclude() throws JsonProcessingException {
+        json =
+                "{}";
+        expected =
+                "{}";
+
+        includeFields.add("abc");
+
+        transformRequest.setJson(json);
+        transformRequest.setIncludeFields(includeFields);
+        transformRequest.setExcludeFields(excludeFields);
+
+        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+    }
+
+    @Test
+    void testFilter_EmptyJsonExclude() throws JsonProcessingException {
+        json =
+                "{}";
+        expected =
+                "{}";
+
+        excludeFields.add("abc");
+
+        transformRequest.setJson(json);
+        transformRequest.setIncludeFields(includeFields);
+        transformRequest.setExcludeFields(excludeFields);
+
+        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+    }
 }

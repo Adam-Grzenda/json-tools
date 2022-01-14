@@ -122,4 +122,33 @@ class FormatTransformerTest {
 
         assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
     }
+
+    @Test
+    void testFormat_EmptyJsonMinify() throws JsonProcessingException {
+        json =
+                "{\n" +
+                "\n" +
+                "}";
+        expected =
+                "{}";
+
+        transformRequest.setJson(json);
+        transformRequest.setMinify(true);
+
+        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
+    }
+
+    @Test
+    void testFormat_EmptyJsonDeminify() throws JsonProcessingException {
+        json =
+                "{}\n" +
+                "\n";
+        expected =
+                "{ }";
+
+        transformRequest.setJson(json);
+        transformRequest.setDeminify(true);
+
+        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
+    }
 }

@@ -8,9 +8,6 @@ import static org.mockito.Mockito.*;
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 class SortTransformerTest {
 
     private TransformerService transformerService;
@@ -88,6 +85,18 @@ class SortTransformerTest {
                 "  \"mno\" : \"pqr\",\n" +
                 "  \"pqr\" : \"mno\"\n" +
                 "}";
+
+        transformRequest.setJson(json);
+
+        assertEquals(expected, transformerService.sort(transformRequest).replaceAll("\\r\\n?", "\n"));
+    }
+
+    @Test
+    void testSort_EmptyJson() throws JsonProcessingException {
+        json =
+                "{}";
+        expected =
+                "{}";
 
         transformRequest.setJson(json);
 
