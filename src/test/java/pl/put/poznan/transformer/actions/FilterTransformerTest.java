@@ -11,6 +11,9 @@ import pl.put.poznan.transformer.TransformRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This testing class uses mock objects
+ */
 class FilterTransformerTest {
 
     private TransformerService transformerService;
@@ -41,7 +44,11 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 
     @Test
@@ -63,7 +70,23 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
+        String minifiedString =
+                "{\"def\":\"yyy\"}";
+        String deminifiedString =
+                "{\n" +
+                "  \"def\" : \"yyy\"\n" +
+                "}";
+
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(false);
+
+        TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
+        TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
+        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
+        verify(formatChecker).transform(intermediateRequest1, null);
     }
 
     @Test
@@ -79,7 +102,11 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 
     @Test
@@ -102,7 +129,24 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        String minifiedString =
+                "{\"abc\":\"xxx\",\"ghi\":\"zzz\"}";
+        String deminifiedString =
+                "{\n" +
+                "  \"abc\" : \"xxx\",\n" +
+                "  \"ghi\" : \"zzz\"\n" +
+                "}";
+
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(false);
+
+        TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
+        TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
+        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
+        verify(formatChecker).transform(intermediateRequest1, null);
     }
 
     @Test
@@ -195,7 +239,24 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        String minifiedString =
+                "{\"abc\":\"xxx\",\"def\":\"yyy\"}";
+        String deminifiedString =
+                "{\n" +
+                "  \"abc\" : \"xxx\",\n" +
+                "  \"def\" : \"yyy\"\n" +
+                "}";
+
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(false);
+
+        TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
+        TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
+        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
+        verify(formatChecker).transform(intermediateRequest1, null);
     }
 
     @Test
@@ -214,7 +275,11 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 
     @Test
@@ -232,7 +297,11 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 
     @Test
@@ -248,7 +317,11 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 
     @Test
@@ -264,6 +337,10 @@ class FilterTransformerTest {
         transformRequest.setIncludeFields(includeFields);
         transformRequest.setExcludeFields(excludeFields);
 
-        assertEquals(expected, transformerService.filter(transformRequest).replaceAll("\\r\\n?", "\n"));
+        FormatTransformer formatChecker = mock(FormatTransformer.class);
+        when(formatChecker.isMinified(transformRequest)).thenReturn(true);
+
+        assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
+        verify(formatChecker).isMinified(transformRequest);
     }
 }

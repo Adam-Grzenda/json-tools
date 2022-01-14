@@ -3,7 +3,6 @@ package pl.put.poznan.transformer.actions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
