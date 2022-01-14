@@ -9,6 +9,7 @@ import pl.put.poznan.transformer.JsonTransformer;
 import pl.put.poznan.transformer.TransformRequest;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,10 +23,10 @@ public class FilterTransformer implements JsonTransformer {
 
     @Override
     public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return applyFilters(request);
+        return filter(request);
     }
 
-    private TransformRequest applyFilters(TransformRequest request) throws JsonProcessingException {
+    private TransformRequest filter(TransformRequest request) throws JsonProcessingException {
 
         if (request.getExcludeFields() == null && request.getIncludeFields() == null) {
             return request;
@@ -41,14 +42,33 @@ public class FilterTransformer implements JsonTransformer {
                 .orElseGet(Collections::emptyList)
                 .stream()
                 .filter(x -> !x.isEmpty())
+                .toArray(String[]::new);
+
+        if (includeFields.length > 0 && excludeFields.length > 0) {
+            throw new IllegalArgumentException("Requesting fields to be both included and excluded is contradictory");
+        }
+
+        excludeFields = Optional.ofNullable(request.getExcludeFields())
+                .orElseGet(Collections::emptyList)
+                .stream()
+                .filter(x -> !x.isEmpty())
                 .map(a -> "-" + a)
                 .toArray(String[]::new);
 
         String filters = Stream.of(includeFields, excludeFields).flatMap(Stream::of).collect(Collectors.joining(","));
 
         if (!filters.isEmpty()) {
+            FormatTransformer formatChecker = new FormatTransformer(this);
+            boolean minifiedInput = formatChecker.isMinified(request);
+
             request.setJson(applyFilters(request.getJson(), filters));
             log.debug("Filtered output: " + request);
+
+            if (!minifiedInput) {
+                // Unwanted transformation done by the filtering library needs to be reverted
+                TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
+                request.setJson(formatChecker.transform(deminifyRequest).getJson());
+            }
         }
 
         return request;
