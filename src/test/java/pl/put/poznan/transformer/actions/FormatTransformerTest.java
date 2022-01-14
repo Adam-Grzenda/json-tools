@@ -2,12 +2,11 @@ package pl.put.poznan.transformer.actions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import pl.put.poznan.service.TransformerService;
 import pl.put.poznan.transformer.TransformRequest;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class FormatTransformerTest {
 
@@ -26,9 +25,9 @@ class FormatTransformerTest {
     void testFormat_Minify1() throws JsonProcessingException {
         json =
                 "{\n" +
-                "\"abc\":\"xxx\",\n" +
-                "\"def\":\"yyy\",\n" +
-                "\"ghi\":\"zzz\"\n" +
+                "  \"abc\":\"xxx\",\n" +
+                "  \"def\":\"yyy\",\n" +
+                "  \"ghi\":\"zzz\"\n" +
                 "}";
         expected =
                 "{\"abc\":\"xxx\",\"def\":\"yyy\",\"ghi\":\"zzz\"}";
@@ -36,15 +35,15 @@ class FormatTransformerTest {
         transformRequest.setJson(json);
         transformRequest.setMinify(true);
 
-        assertEquals(expected, transformerService.format(transformRequest));
+        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
     }
 
     @Test
     void testFormat_Minify2() throws JsonProcessingException {
         json =
                 "{\n" +
-                "\"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
-                "\n" +
+                "  \"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
+                "  \n" +
                 "\"ghi\":\"zzz\"}";
         expected =
                 "{\"abc\":\"xxx\",\"def\":\"yyy\",\"ghi\":\"zzz\"}";
@@ -52,7 +51,7 @@ class FormatTransformerTest {
         transformRequest.setJson(json);
         transformRequest.setMinify(true);
 
-        assertEquals(expected, transformerService.format(transformRequest));
+        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
     }
 
     @Test
@@ -95,14 +94,14 @@ class FormatTransformerTest {
         json =
                 "{\"abc\":\"xxx\",\"def\":\"yyy\",\"ghi\":\"zzz\"}";
         expected =
-                "{\"abc\":\"xxx\",\"def\":\"yyy\",\"ghi\":\"zzz\"}";
+                "{}";
 
         transformRequest.setJson(json);
         transformRequest.setMinify(true);
         transformRequest.setDeminify(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            assertEquals(expected, transformerService.format(transformRequest));
+            assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
         });
     }
 
@@ -110,17 +109,17 @@ class FormatTransformerTest {
     void testFormat_NoChange() throws JsonProcessingException {
         json =
                 "{\n" +
-                "\"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
-                "\n" +
+                "  \"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
+                "  \n" +
                 "\"ghi\":\"zzz\"}";
         expected =
                 "{\n" +
-                "\"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
-                "\n" +
+                "  \"abc\":\"xxx\", \"def\" : \"yyy\",\n" +
+                "  \n" +
                 "\"ghi\":\"zzz\"}";
 
         transformRequest.setJson(json);
 
-        assertEquals(expected, transformerService.format(transformRequest));
+        assertEquals(expected, transformerService.format(transformRequest).replaceAll("\\r\\n?", "\n"));
     }
 }
