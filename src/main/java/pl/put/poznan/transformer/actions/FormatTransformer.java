@@ -25,7 +25,7 @@ public class FormatTransformer extends JsonTransformerDecorator {
     /**
      * Invokes format method
      *
-     * @param request instance of TransformRequest, contains JSON object, excluded and included fields
+     * @param request instance of TransformRequest, contains JSON object and requested transformations
      * @return reformatted JSON object
      * @throws JsonProcessingException if JSON object cannot be reformatted
      */
@@ -35,9 +35,22 @@ public class FormatTransformer extends JsonTransformerDecorator {
     }
 
     /**
+     * A method to check if a JSON object is minified
+     *
+     * @param request instance of TransformRequest, contains JSON object and requested transformations
+     * @return boolean value containing the answer
+     * @throws JsonProcessingException if JSON object cannot be read or transformed
+     */
+    public boolean isMinified(TransformRequest request) throws JsonProcessingException {
+        Object json = jsonMapper.readJson(request.getJson(), Object.class);
+        String transformed = jsonMapper.writeJsonAsString(json, false);
+        return request.getJson().equals(transformed);
+    }
+
+    /**
      * A method to format a JSON object
      *
-     * @param request JSON object
+     * @param request instance of TransformRequest, contains JSON object and requested transformations
      * @return reformatted JSON object
      * @throws JsonProcessingException if JSON object cannot be read or transformed
      */
