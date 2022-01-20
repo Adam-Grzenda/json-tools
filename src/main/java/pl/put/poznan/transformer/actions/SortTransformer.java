@@ -58,7 +58,7 @@ public class SortTransformer extends JsonTransformerDecorator {
         if (!minifiedInput) {
             // Unwanted transformation done by the sorting library needs to be reverted
             TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
-            request.setJson(formatChecker.transform(deminifyRequest, null).getJson());
+            request.setJson(formatChecker.transform(deminifyRequest).getJson());
         }
 
         return request;

@@ -82,11 +82,11 @@ class FilterTransformerTest {
 
         TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
         TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
-        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+        when(formatChecker.transform(intermediateRequest1)).thenReturn(intermediateRequest2);
 
         assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
         verify(formatChecker).isMinified(transformRequest);
-        verify(formatChecker).transform(intermediateRequest1, null);
+        verify(formatChecker).transform(intermediateRequest1);
     }
 
     @Test
@@ -142,11 +142,11 @@ class FilterTransformerTest {
 
         TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
         TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
-        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+        when(formatChecker.transform(intermediateRequest1)).thenReturn(intermediateRequest2);
 
         assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
         verify(formatChecker).isMinified(transformRequest);
-        verify(formatChecker).transform(intermediateRequest1, null);
+        verify(formatChecker).transform(intermediateRequest1);
     }
 
     @Test
@@ -252,11 +252,11 @@ class FilterTransformerTest {
 
         TransformRequest intermediateRequest1 = new TransformRequest(false, true, minifiedString);
         TransformRequest intermediateRequest2 = new TransformRequest(false, true, deminifiedString);
-        when(formatChecker.transform(intermediateRequest1, null)).thenReturn(intermediateRequest2);
+        when(formatChecker.transform(intermediateRequest1)).thenReturn(intermediateRequest2);
 
         assertEquals(expected, transformerService.filter(transformRequest, formatChecker).replaceAll("\\r\\n?", "\n"));
         verify(formatChecker).isMinified(transformRequest);
-        verify(formatChecker).transform(intermediateRequest1, null);
+        verify(formatChecker).transform(intermediateRequest1);
     }
 
     @Test

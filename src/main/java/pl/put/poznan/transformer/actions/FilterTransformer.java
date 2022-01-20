@@ -23,6 +23,11 @@ public class FilterTransformer implements JsonTransformer {
     }
 
     @Override
+    public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
+        return transform(request, null);
+    }
+
+    @Override
     public TransformRequest transform(TransformRequest request, JsonTransformer formatChecker) throws JsonProcessingException {
         return filter(request, formatChecker);
     }
@@ -70,7 +75,7 @@ public class FilterTransformer implements JsonTransformer {
             if (!minifiedInput) {
                 // Unwanted transformation done by the filtering library needs to be reverted
                 TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
-                request.setJson(((FormatTransformer)formatChecker).transform(deminifyRequest, null).getJson());
+                request.setJson(((FormatTransformer)formatChecker).transform(deminifyRequest).getJson());
             }
         }
 

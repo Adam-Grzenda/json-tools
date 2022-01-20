@@ -9,6 +9,11 @@ public abstract class JsonTransformerDecorator implements JsonTransformer {
     private final JsonTransformer jsonTransformer;
 
     @Override
+    public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
+        return transform(request, null);
+    }
+
+    @Override
     public TransformRequest transform(TransformRequest request, JsonTransformer helper) throws JsonProcessingException {
         return jsonTransformer.transform(request, helper);
     }
