@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import pl.put.poznan.transformer.JsonTransformer;
 import pl.put.poznan.transformer.TransformRequest;
 
-import java.text.Format;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
