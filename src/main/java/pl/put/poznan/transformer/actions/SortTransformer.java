@@ -28,29 +28,39 @@ public class SortTransformer extends JsonTransformerDecorator {
     /**
      * Invokes sort method
      *
-     * @param request instance of TransformRequest, contains JSON object, excluded and included fields
+     * @param request instance of TransformRequest, contains JSON object and requested transformations
      * @return sorted JSON object
      * @throws JsonProcessingException if JSON object cannot be sorted
      */
     @Override
-    public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return sort(super.transform(request));
+    public TransformRequest transform(TransformRequest request, JsonTransformer helper) throws JsonProcessingException {
+        return sort(super.transform(request, helper));
     }
 
     /**
      * A method to sort a JSON object by a key
      *
-     * @param request A JSON object
+     * @param request instance of TransformRequest, contains JSON object and requested transformations
      * @return sorted JSON object
      * @throws JsonProcessingException if JSON object cannot be read or transformed
      */
     private TransformRequest sort(TransformRequest request) throws JsonProcessingException {
+        FormatTransformer formatChecker = new FormatTransformer(new FilterTransformer());
+        boolean minifiedInput = formatChecker.isMinified(request);
+
         Object json = jsonMapper.readJson(request.getJson(), Object.class);
         String transformed = jsonMapper.writeJsonAsString(json, true);
         ObjectMapper om = new ObjectMapper();
         om.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         request.setJson(om.writeValueAsString(om.readValue(transformed, HashMap.class)));
         log.debug("Sorted output: " + request);
+
+        if (!minifiedInput) {
+            // Unwanted transformation done by the sorting library needs to be reverted
+            TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
+            request.setJson(formatChecker.transform(deminifyRequest).getJson());
+        }
+
         return request;
     }
 }

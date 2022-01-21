@@ -17,6 +17,12 @@ public class TransformRequest {
 
     private String json;
 
+    public TransformRequest(boolean minify, boolean deminify, String json) {
+        this.minify = minify;
+        this.deminify = deminify;
+        this.json = json;
+    }
+
     public static TransformRequest of(String json, List<String> excludeFields, List<String> includeFields) {
         TransformRequest transformRequest = new TransformRequest();
         transformRequest.setJson(json);

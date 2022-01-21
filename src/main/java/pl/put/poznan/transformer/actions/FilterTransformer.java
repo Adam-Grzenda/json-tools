@@ -22,10 +22,15 @@ public class FilterTransformer implements JsonTransformer {
 
     @Override
     public TransformRequest transform(TransformRequest request) throws JsonProcessingException {
-        return applyFilters(request);
+        return transform(request, null);
     }
 
-    private TransformRequest applyFilters(TransformRequest request) throws JsonProcessingException {
+    @Override
+    public TransformRequest transform(TransformRequest request, JsonTransformer formatChecker) throws JsonProcessingException {
+        return filter(request, formatChecker);
+    }
+
+    private TransformRequest filter(TransformRequest request, JsonTransformer formatChecker) throws JsonProcessingException {
 
         if (request.getExcludeFields() == null && request.getIncludeFields() == null) {
             return request;
@@ -41,14 +46,35 @@ public class FilterTransformer implements JsonTransformer {
                 .orElseGet(Collections::emptyList)
                 .stream()
                 .filter(x -> !x.isEmpty())
+                .toArray(String[]::new);
+
+        if (includeFields.length > 0 && excludeFields.length > 0) {
+            throw new IllegalArgumentException("Requesting fields to be both included and excluded is contradictory");
+        }
+
+        excludeFields = Optional.ofNullable(request.getExcludeFields())
+                .orElseGet(Collections::emptyList)
+                .stream()
+                .filter(x -> !x.isEmpty())
                 .map(a -> "-" + a)
                 .toArray(String[]::new);
 
         String filters = Stream.of(includeFields, excludeFields).flatMap(Stream::of).collect(Collectors.joining(","));
 
         if (!filters.isEmpty()) {
+            if (formatChecker == null) {
+                formatChecker = new FormatTransformer(new FilterTransformer());
+            }
+            boolean minifiedInput = ((FormatTransformer)formatChecker).isMinified(request);
+
             request.setJson(applyFilters(request.getJson(), filters));
             log.debug("Filtered output: " + request);
+
+            if (!minifiedInput) {
+                // Unwanted transformation done by the filtering library needs to be reverted
+                TransformRequest deminifyRequest = new TransformRequest(false, true, request.getJson());
+                request.setJson(((FormatTransformer)formatChecker).transform(deminifyRequest).getJson());
+            }
         }
 
         return request;
@@ -57,11 +83,10 @@ public class FilterTransformer implements JsonTransformer {
     private String applyFilters(String inputJson, String filters) throws JsonProcessingException {
         Object json = jsonMapper.readJson(inputJson, Object.class);
         // It's rather interesting that squiggly only pretty prints the object if it is literally Object,
-        // whereas for JsonNode it doesn't even filter it - investigate?
+        // whereas for JsonNode it doesn't even filter it
 
-        // Given field "friends" and Applied filters: friends,-friends the field is in the response
-        log.debug("Applied filters: " + filters);
         ObjectMapper outputMapper = Squiggly.init(new ObjectMapper(), filters);
+        log.debug("Applied filters: " + filters);
         return SquigglyUtils.stringify(outputMapper, json);
     }
 }
