@@ -28,7 +28,7 @@ public class CompareService {
     private final JsonMapper mapper = JsonMapper.getInstance();
 
     /**
-     * A class which logs info message
+     * A constructor which logs info message
      */
     public CompareService() {
         log.info("Initialized CompareService");
