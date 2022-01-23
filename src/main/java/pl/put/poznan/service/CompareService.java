@@ -22,8 +22,14 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class CompareService {
 
+    /**
+     * JsonMapper object used for processing texts
+     */
     private final JsonMapper mapper = JsonMapper.getInstance();
 
+    /**
+     * A constructor which logs info message
+     */
     public CompareService() {
         log.info("Initialized CompareService");
     }
