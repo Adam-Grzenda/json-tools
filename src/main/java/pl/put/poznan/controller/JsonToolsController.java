@@ -19,7 +19,13 @@ import java.io.IOException;
 @Slf4j
 public class JsonToolsController {
 
+    /**
+     * TransformerService object used to transform every object into proper form
+     */
     private final TransformerService transformerService;
+    /**
+     * CompareService object used to compare two texts
+     */
     private final CompareService jsonCompare;
 
     /**
